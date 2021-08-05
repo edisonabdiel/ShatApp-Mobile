@@ -13,14 +13,14 @@ import Chat from './components/Chat';
 const Stack = createStackNavigator();
 
 export default class HelloWorld extends Component {
-
+// Iniial State
   constructor(props) {
     super(props);
     this.state = {
       text: '',
     };
   }
-  
+
   render() {
     return (
       <NavigationContainer styles={styles.container}>

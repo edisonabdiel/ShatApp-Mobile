@@ -1,17 +1,19 @@
+// React modules
 import React, { useState, useEffect } from 'react';
+// React Native Components
 import { View, Text, Button, TextInput, ImageBackground, StyleSheet, TouchableOpacity } from 'react-native';
 
 // Set the Background Image
 const background = require('../assets/BackgroundImage.png');
 // Background color options 
-const colors = ['#292E49', '#B29F94', '#E2D1C3', '#C3CFE2', '#FFFFFF'];
+const colors = ['#292E49', '#E2D1C3', '#C3CFE2', '#FFFFFF'];
 
 export default class Start extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       name: '',
-      backgroundColor: '#408337',
+      backgroundColor: '#FFF',
     }
   }
 
