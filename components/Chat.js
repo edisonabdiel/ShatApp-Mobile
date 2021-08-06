@@ -83,8 +83,7 @@ export default class Chat extends React.Component {
             }}
           />
           {Platform.OS === 'android' ? <KeyboardAvoidingView
-            behavior="height"
-            style={[styles.bgcolor(backgroundColor), styles.container]} /> : null}
+            behavior="height" /> : null}
         </View>
       </View>
     )
