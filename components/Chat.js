@@ -12,21 +12,21 @@ import { GiftedChat, InputToolbar, Bubble } from 'react-native-gifted-chat';
 // Firebase boilerplate
 import firebase from 'firebase';
 import 'firebase/firestore';
-// Config keys
-const firebaseConfig = {
-  apiKey: "AIzaSyAD0lh_wdmptkLJZP9TOCj5AKSBq_VvWpY",
-  authDomain: "react-native-gifted-chat.firebaseapp.com",
-  databaseURL: "shatapp-mobile.appspot.com",
-  projectId: "shatapp-mobile",
-  storageBucket: "shatapp-mobile.appspot.com",
-  messagingSenderId: "672068650030",
-  appId: '1:672068650030:ios:b8c0ccac353a32b24d0bbf',
-}
-
+ // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+ var firebaseConfig = {
+  apiKey: "AIzaSyBJUhdfwOjoFdfBAaGfebCbvb2NCoRZtmY",
+  authDomain: "shatapp-1d6c7.firebaseapp.com",
+  projectId: "shatapp-1d6c7",
+  storageBucket: "shatapp-1d6c7.appspot.com",
+  messagingSenderId: "23794753192",
+  appId: "1:23794753192:web:b856a0b76ff94328832c9d",
+  measurementId: "G-HHSTQ6X7D2"
+};
 // Initialize Firebase
-if (!firebase.apps.length) {
+if (!firebase.app.length) {
   firebase.initializeApp(firebaseConfig);
 }
+firebase.analytics();
 
 
 export default class Chat extends React.Component {
@@ -92,7 +92,10 @@ export default class Chat extends React.Component {
   onSend(messages = []) {
     this.setState(previousState => ({
       messages: GiftedChat.append(previousState.messages, messages),
-    }));
+    }), () => {
+      this.addMessages();
+    },
+    );
   }
   // Render a bubble
   renderBubble(props) {
@@ -111,7 +114,7 @@ export default class Chat extends React.Component {
     )
   }
 
-  // Reads ann renders the messages from Firebase
+  // Reads and renders the messages from Firebase
   OnCollectionUpdate = (snapshot) => {
     const messages = [];
     snapshot.forEach(doc => {
