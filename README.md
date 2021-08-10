@@ -1,6 +1,17 @@
 ## ShatApp Mobile
 
-![shatapp-mobile](https://user-images.githubusercontent.com/43752457/128220370-54b2d8ce-56a5-4270-83b4-c90508f2e2f9.png)
+<p align="center">
+    Just another chat app for mobile devices built with React Native.
+  </p>
+
+  </br>
+
+<p align="center">
+
+![simulator_screenshot_9588B2F9-F51F-471D-BDAA-02270DCF90EC](https://user-images.githubusercontent.com/43752457/128891178-eed7181e-ad85-4c44-9279-3edadfd81cbd.png)
+
+
+</p>
 
 ## Objective
 

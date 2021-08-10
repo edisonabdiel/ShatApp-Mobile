@@ -84,15 +84,17 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
   },
   title: {
-    color: '#E3FDF5',
+    color: '#000',
     fontSize: 42,
     fontWeight: 'bold',
+    fontFamily: 'Zapfino',
 
   },
   text: {
     color: "white",
     fontSize: 18,
     fontWeight: '500',
+    fontFamily: 'HelveticaNeue-Bold',
   },
   namefield: {
     backgroundColor: '#fff',
