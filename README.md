@@ -6,9 +6,9 @@
 
   </br>
 
-<p align="center">
+<p align="center" width="4000x" >
 
-![simulator_screenshot_9588B2F9-F51F-471D-BDAA-02270DCF90EC](https://user-images.githubusercontent.com/43752457/128891178-eed7181e-ad85-4c44-9279-3edadfd81cbd.png)
+![simulator_screenshot_E016DFBF-3B3E-4625-8000-241D95520B62](https://user-images.githubusercontent.com/43752457/128925597-c3e3643b-08a8-42fb-9ef7-9f21be416be0.png)
 
 
 </p>

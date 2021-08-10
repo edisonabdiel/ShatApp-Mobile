@@ -58,7 +58,7 @@ export default class Start extends React.Component {
               style={styles.button}
               onPress={() => this.props.navigation.navigate('Chat', { name: this.state.name, backgroundColor: this.state.backgroundColor })}>
               <Text style={styles.text}>
-                Chat
+                Start Chatting!
               </Text>
             </TouchableOpacity>
           </View>
@@ -91,10 +91,10 @@ const styles = StyleSheet.create({
 
   },
   text: {
-    color: "white",
+    color: "#000",
     fontSize: 18,
     fontWeight: '500',
-    fontFamily: 'HelveticaNeue-Bold',
+    fontFamily: 'AmericanTypewriter-Bold',
   },
   namefield: {
     backgroundColor: '#fff',
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   wrapper: {
-    backgroundColor: 'rgba(52, 52, 52, 0.8)',
+    backgroundColor: 'transparent',
     borderRadius: 50,
     width: '80%',
     height: '80%',
@@ -133,11 +133,10 @@ const styles = StyleSheet.create({
     borderColor: '#EC77AB',
   },
   button: {
-    width: '40%',
+    width: '50%',
     borderRadius: 50,
     height: 40,
-    backgroundColor: '#EC77AB',
-    color: '#434343',
+    backgroundColor: '#ccc',
     alignItems: 'center',
     fontWeight: 'bold',
     justifyContent: 'space-evenly',
