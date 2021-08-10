@@ -58,7 +58,7 @@ export default class Start extends React.Component {
               style={styles.button}
               onPress={() => this.props.navigation.navigate('Chat', { name: this.state.name, backgroundColor: this.state.backgroundColor })}>
               <Text style={styles.text}>
-                Start Chatting!
+                Start Chatting
               </Text>
             </TouchableOpacity>
           </View>
@@ -97,13 +97,13 @@ const styles = StyleSheet.create({
     fontFamily: 'AmericanTypewriter-Bold',
   },
   namefield: {
-    backgroundColor: '#fff',
+    backgroundColor: '#ccc',
     width: '70%',
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
-    borderRadius: 3,
-    padding: 5,
+    borderRadius: 10,
+    padding: 10,
   },
   wrapper: {
     backgroundColor: 'transparent',
