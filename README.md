@@ -6,10 +6,9 @@
 
   </br>
 
-<p align="center" width="4000x" >
+<p align="center" width="400" >
 
-![simulator_screenshot_E016DFBF-3B3E-4625-8000-241D95520B62](https://user-images.githubusercontent.com/43752457/128925597-c3e3643b-08a8-42fb-9ef7-9f21be416be0.png)
-
+![simulator_screenshot_8941C55E-DF33-4D8C-9E0F-FBA849EB3F57](https://user-images.githubusercontent.com/43752457/128927542-86dbbb88-29c1-4159-97fa-26870733bf0a.png)
 
 </p>
 

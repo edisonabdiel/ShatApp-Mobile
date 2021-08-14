@@ -23,10 +23,6 @@ import 'firebase/firestore';
   appId: "1:23794753192:web:b856a0b76ff94328832c9d",
   measurementId: "G-HHSTQ6X7D2"
 };
-// Initialize Firebase
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
 
 
 export default class Chat extends React.Component {
@@ -45,9 +41,13 @@ export default class Chat extends React.Component {
       imgage: null,
       location: null,
     }
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    // Listen for updates in Firestore messages collection.
+  this.referenceChatMessages = firebase.firestore().collection('messages');
   }
-  // Listen for updates in Firestore messages collection.
-  referenceChatMessages = firebase.firestore().collection('messages');
+  
 
   // Sets the state with a static message
   componentDidMount() {
@@ -74,7 +74,7 @@ export default class Chat extends React.Component {
             });
             this.unsubscribe = this.referenceChatMessages
               .orderBy("createdAt", "desc")
-              .onSnapshot(this.onCollectionUpdate);
+              .onSnapshot(this.OnCollectionUpdate);
           });
       } else {
         this.setState({ isConnected: false });
