@@ -1,28 +1,18 @@
 // React Modules
 import React from 'react';
 // React-Native Components
-import { View, Text, StyleSheet, Platform, KeyboardAvoidingView, ImageBackground } from 'react-native';
+import { View, StyleSheet, Platform, KeyboardAvoidingView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
 import MapView from 'react-native-maps';
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['Setting a timer']);
 // Custom Actions
 import CustomActions from './CustomActions';
 // GiftedChat Components
 import { GiftedChat, InputToolbar, Bubble } from 'react-native-gifted-chat';
-
-// Firebase boilerplate
-import firebase from 'firebase';
-import 'firebase/firestore';
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
- const firebaseConfig = {
-  apiKey: "AIzaSyBJUhdfwOjoFdfBAaGfebCbvb2NCoRZtmY",
-  authDomain: "shatapp-1d6c7.firebaseapp.com",
-  projectId: "shatapp-1d6c7",
-  storageBucket: "shatapp-1d6c7.appspot.com",
-  messagingSenderId: "23794753192",
-  appId: "1:23794753192:web:b856a0b76ff94328832c9d",
-  measurementId: "G-HHSTQ6X7D2"
-};
+// Firebase
+import firebase from '../utilities/firebase';
 
 
 export default class Chat extends React.Component {
@@ -41,9 +31,6 @@ export default class Chat extends React.Component {
       imgage: null,
       location: null,
     }
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
     // Listen for updates in Firestore messages collection.
   this.referenceChatMessages = firebase.firestore().collection('messages');
   }
@@ -56,14 +43,22 @@ export default class Chat extends React.Component {
     //Find out connection status
     NetInfo.fetch().then((connection) => {
       if (connection.isConnected) {
-        this.setState({ isConnected: true });
+        this.setState({
+          isConnected: true
+        });
+        // onSnapshot function listens for collection updates
+         this.referenceChatMessages.orderBy('createdAt', 'desc').onSnapshot(this.onCollectionUpdate);
         // Authenticates user via Firebase
         this.authUnsubscribe = firebase.auth()
           .onAuthStateChanged(async (user) => {
             if (!user) {
-              await firebase.auth().signInAnonymously();
+              let aUser = await firebase.auth().signInAnonymously();
+              user = {
+                uid: aUser.uid,
+              }
             }
-            this.setState({
+            this.setState((prevState) =>({
+              ...prevState,
               uid: user.uid,
               user: {
                 _id: user.uid,
@@ -71,20 +66,24 @@ export default class Chat extends React.Component {
                 avatar: 'https://placeimg.com/140/140/any',
               },
               messages: [],
-            });
-            this.unsubscribe = this.referenceChatMessages
-              .orderBy("createdAt", "desc")
-              .onSnapshot(this.OnCollectionUpdate);
+              image: this.state.image,
+              location: {
+                longitude: 11.5249684,
+                latitude: 48.0643933,
+              }
+            }));
           });
       } else {
-        this.setState({ isConnected: false });
+        this.setState({
+          isConnected: false
+        });
         this.getMessages();
       }
     });
   }
 
   componentWillUnmount() {
-    this.unsubscribe();
+    this.referenceChatMessages = () => {}
     this.authUnsubscribe();
   }
 
@@ -125,7 +124,7 @@ export default class Chat extends React.Component {
   // Reads and renders the messages from Firebase
   OnCollectionUpdate = (snapshot) => {
     const messages = [];
-    snapshot.forEach(doc => {
+    snapshot.forEach((doc) => {
       let data = doc.data();
       messages.push({
         _id: data._id,
@@ -135,12 +134,12 @@ export default class Chat extends React.Component {
           _id: data.user._id,
           name: data.user.name,
           avatar: data.user.avatar,
-          image: data.image || null,
-          location: data.location || null,
-        }
+        },
+        image: data.image || null,
+        location: data.location || null,
       });
       this.setState({
-        messages: messages,
+        messages,
       })
     });
   }
@@ -235,7 +234,7 @@ export default class Chat extends React.Component {
             renderUsernameOnMessage={true}
             isConnected={this.state.isConnected}
             messages={this.state.messages}
-            onSend={messages => this.onSend(messages)}
+            onSend={(messages) => this.onSend(messages)}
             user={this.state.user}
           />
           {Platform.OS === 'android' ? <KeyboardAvoidingView
