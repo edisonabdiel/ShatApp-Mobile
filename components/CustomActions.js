@@ -1,108 +1,93 @@
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
-import PropTypes from 'prop-types';
-import * as Permissions from 'expo-permissions';
-import * as ImagePicker from 'expo-image-picker';
-import * as Location from 'expo-location';
+import { StyleSheet } from 'react-native';
+// GiftedChat.
+import { Actions } from 'react-native-gifted-chat';
+// Firebase + Firestore.
 import firebase from '../utilities/firebase';
+// Allow to select images and videos from the phone library or take a picture with the camera.
+import * as ImagePicker from 'expo-image-picker';
+// Allow reading geolocation information from the device.
+import * as Location from 'expo-location';
 
-export default class CustomActions extends React.Component {
+export default function CustomActions(props) {
+  // Select an image or video from device storage to send.
+  const sendImage = async () => {
+    // Asks the user to grant permissions for accessing user's photo.
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-  onActionPress = () => {
-    const options = [
-      "Choose from library",
-      "Take picture",
-      "Send location",
-      "Cancel",
-    ];
-    const cancelButtonIndex = options.length - 1;
-    this.context.actionSheet().showActionSheetWithOptions(
-      {
-        options,
-        cancelButtonIndex,
-      },
-      async (buttonIndex) => {
-        switch (buttonIndex) {
-          case 0:
-            console.log("user wants to pick an image");
-            return this.selectImage();
-          case 1:
-            console.log("user wants to take a photo");
-            return this.takePhoto();
-          case 2:
-            console.log("user wants to get their location");
-            return this.getLocation();
-        }
-      }
-    );
-  };
-
-  //Select Image from library
-  selectImage = async () => {
-    const { status } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
     try {
-      if (status === "granted") {
+      if (status === 'granted') {
+        // Display the system UI for choosing an image or a video from the phone's library.
         const result = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        }).catch((error) => console.log(error));
+          mediaTypes: ImagePicker.MediaTypeOptions.All,
+        }).catch((error) => {
+          console.error(error);
+        });
+
         if (!result.cancelled) {
-          const imageUrl = await this.uploadImageFetch(result.uri);
-          this.props.onSend({ image: imageUrl });
+          const imageUrl = await uploadImage(result.uri);
+          props.onSend({ image: imageUrl });
         }
       }
     } catch (error) {
-      console.log(error.message);
+      console.error(error);
     }
   };
 
-  
-  takePhoto = async () => {
-    const { status } = await Permissions.askAsync(
-      Permissions.CAMERA,
-      Permissions.MEDIA_LIBRARY
-    );
+  // Take an image or video to send from the camera.
+  const takeImage = async () => {
+    // Asks the user to grant permissions for accessing user's camera.
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+
     try {
-      if (status === "granted") {
+      if (status === 'granted') {
         const result = await ImagePicker.launchCameraAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        }).catch((error) => console.log(error));
+          mediaTypes: ImagePicker.MediaTypeOptions.All,
+        }).catch((error) => {
+          console.error(error);
+        });
 
         if (!result.cancelled) {
-          const imageUrl = await this.uploadImageFetch(result.uri);
-          this.props.onSend({ image: imageUrl });
+          const imageUrl = await uploadImage(result.uri);
+          props.onSend({ image: imageUrl });
         }
       }
     } catch (error) {
-      console.log(error.message);
+      console.error(error);
     }
   };
 
-  //Get Location
-  getLocation = async () => {
+  // Poll the current geolocation or subscribe to geolocation update events.
+  const sendLocation = async () => {
+    // Asks the user to grant permissions for geolocation while the app is in the foreground.
+    const { status } = await Location.requestForegroundPermissionsAsync({});
+
     try {
-      const { status } = await Permissions.askAsync(Permissions.LOCATION_BACKGROUND_);
-      if (status === "granted") {
-        const result = await Location.getCurrentPositionAsync(
-          {}
-        ).catch((error) => console.log(error));
-        const longitude = JSON.stringify(result.coords.longitude);
-        const altitude = JSON.stringify(result.coords.latitude);
-        if (result) {
-          this.props.onSend({
-            location: {
-              longitude: result.coords.longitude,
-              latitude: result.coords.latitude,
-            },
-          });
+      if (status === 'granted') {
+        // Requests for one-time delivery of the user's current geolocation.
+        const location = await Location.getCurrentPositionAsync({
+          // Balanced: Accurate to within one hundred meters.
+          accuracy: Location.Accuracy.Balanced,
+        }).catch((error) => {
+          console.error(error);
+        });
+
+        // Send latitude and longitude to locate the position on the map.
+        const latitude = location.coords.latitude;
+        const longitude = location.coords.longitude;
+
+        if (location) {
+          props.onSend({ location: { latitude, longitude } });
         }
       }
     } catch (error) {
-      console.log(error.message);
+      console.error(error);
     }
   };
 
-  //Upload image to firebase
-  uploadImageFetch = async (uri) => {
+  // Convert media file to Blob for Firebase storage.
+  const uploadImage = async (uri) => {
+    // create a new XMLHttpRequest and set the responseType to type blob.
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.onload = function () {
@@ -110,65 +95,53 @@ export default class CustomActions extends React.Component {
       };
       xhr.onerror = function (e) {
         console.log(e);
-        reject(new TypeError("Network request failed"));
+        reject(new TypeError('Network request failed'));
       };
-      xhr.responseType = "blob";
-      xhr.open("GET", uri, true);
+      xhr.responseType = 'blob';
+      xhr.open('GET', uri, true);
       xhr.send(null);
     });
 
-    const imageNameBefore = uri.split("/");
+    const imageNameBefore = uri.split('/');
     const imageName = imageNameBefore[imageNameBefore.length - 1];
 
+    // Create a reference to the storage and put the content retrieved from the Ajax request.
     const ref = firebase.storage().ref().child(`images/${imageName}`);
-
     const snapshot = await ref.put(blob);
 
+    // Close the connection and return the download URL.
     blob.close();
-
     return await snapshot.ref.getDownloadURL();
   };
 
-
-  render() {
-    return (
-      <TouchableOpacity
-        accessible={true}
-        accessibilityLabel="More options"
-        accessibilityHint="You can send a picture or your location."
-        style={[styles.container]}
-        onPress={this.onActionPress}
-      >
-        <View style={[styles.wrapper, this.props.wrapperStyle]}>
-          <Text style={[styles.iconText, this.props.iconTextStyle]}>+</Text>
-        </View>
-      </TouchableOpacity>
-    );
-  }
+  return (
+    // Render Actions.
+    <Actions
+      {...props}
+      containerStyle={styles.container}
+      // Display a menu to select actions.
+      options={{
+        'Send picture from library': sendImage,
+        'Take picture': takeImage,
+        'Share location': sendLocation,
+        // Close menu and return to chat.
+        Return: () => {},
+      }}
+      optionTintColor='#000000'
+      accessible={true}
+      accessibilityLabel='Actions menu'
+      accessibilityHint='Display menu to send a picture, take a picture or send location'
+      accessibilityRole='menu'
+    />
+  );
 }
 
 const styles = StyleSheet.create({
+  // Actions menu container.
   container: {
     width: 26,
     height: 26,
     marginLeft: 10,
     marginBottom: 10,
   },
-  wrapper: {
-    borderRadius: 13,
-    borderColor: '#b2b2b2',
-    borderWidth: 2,
-    flex: 1,
-  },
-  iconText: {
-    color: '#b2b2b2',
-    fontWeight: 'bold',
-    fontSize: 16,
-    backgroundColor: 'transparent',
-    textAlign: 'center',
-  },
 });
-
-CustomActions.contextTypes = {
-  actionSheet: PropTypes.func,
-};

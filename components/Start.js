@@ -1,5 +1,5 @@
 // React modules
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 // React Native Components
 import { View, Text, Button, TextInput, ImageBackground, StyleSheet, TouchableOpacity } from 'react-native';
 
