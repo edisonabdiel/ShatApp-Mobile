@@ -28,7 +28,7 @@ export default class Chat extends React.Component {
         avatar: '',
       },
       isConnected: false,
-      imgage: null,
+      image: null,
       location: null,
     }
     // Listen for updates in Firestore messages collection.
@@ -57,6 +57,7 @@ export default class Chat extends React.Component {
                 uid: aUser.uid,
               }
             }
+            console.log("user after login", user)
             this.setState((prevState) =>({
               ...prevState,
               uid: user.uid,
@@ -150,7 +151,7 @@ export default class Chat extends React.Component {
     this.referenceChatMessages.add({
       _id: message._id,
       text: message.text || '',
-      createdAt: message.createdAt,
+      createdAt: message.createdAt.toDate(),
       user: message.user,
       image: message.image || null,
       location: message.location || null,
